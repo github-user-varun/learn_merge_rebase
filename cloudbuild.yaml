@@ -1,0 +1,44 @@
+steps:
+# Build the container image for service 1
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-f', './service1/Dockerfile', '-t', 'gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE1_DOCKER_IMAGE_NAME}:${_SERVICE1_DOCKER_IMAGE_TAG}', '.']
+# Push the container image to Container Registry
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE1_DOCKER_IMAGE_NAME}:${_SERVICE1_DOCKER_IMAGE_TAG}']
+# Deploy container image to Cloud Run
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      entrypoint: gcloud
+      args: ['run', 'deploy', '${_SERVICE1_CLOUDRUN_NAME}', '--image', 'gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE1_DOCKER_IMAGE_NAME}:${_SERVICE1_DOCKER_IMAGE_TAG}', '--port', '${_SERVICE1_CLOUDRUN_PORT}', '--region', 'us-central1','--platform', 'managed', '--allow-unauthenticated']
+
+# Build the container image for service 2
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-f', './service2/Dockerfile', '-t', 'gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE2_DOCKER_IMAGE_NAME}:${_SERVICE2_DOCKER_IMAGE_TAG}', '.']
+# Push the container image to Container Registry
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE2_DOCKER_IMAGE_NAME}:${_SERVICE2_DOCKER_IMAGE_TAG}']
+# Deploy container image to Cloud Run
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      entrypoint: gcloud
+      args: ['run', 'deploy', '${_SERVICE2_CLOUDRUN_NAME}', '--image', 'gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE2_DOCKER_IMAGE_NAME}:${_SERVICE2_DOCKER_IMAGE_TAG}', '--port', '${_SERVICE2_CLOUDRUN_PORT}', '--region', 'us-central1','--platform', 'managed', '--allow-unauthenticated']
+
+images:
+    - gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE1_DOCKER_IMAGE_NAME}:${_SERVICE1_DOCKER_IMAGE_TAG}
+    - gcr.io/${_PROJECT_ID}/${_REPO_AND_BRANCH}/${_SERVICE2_DOCKER_IMAGE_NAME}:${_SERVICE2_DOCKER_IMAGE_TAG}
+
+substitutions:
+  _PROJECT_ID: 'splendid-world-342210'
+  _REPO_AND_BRANCH: 'demo3_feature3'
+  _SERVICE1_DOCKER_IMAGE_NAME: 'service6'
+  _SERVICE1_DOCKER_IMAGE_TAG: 'latest1'
+  _SERVICE1_CLOUDRUN_NAME: 'service6'
+  _SERVICE1_CLOUDRUN_PORT: '5052'
+  _SERVICE2_DOCKER_IMAGE_NAME: 'service7'
+  _SERVICE2_DOCKER_IMAGE_TAG: 'latest1'
+  _SERVICE2_CLOUDRUN_NAME: 'service7'
+  _SERVICE2_CLOUDRUN_PORT: '5053'
+  
+  
+options:
+ logging: CLOUD_LOGGING_ONLY
+
+# docker build -f Dockerfile -t signalprocessor:livegops_demo1 .
