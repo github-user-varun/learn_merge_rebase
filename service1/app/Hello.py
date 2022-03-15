@@ -21,5 +21,10 @@ def assetcompliance_hello():
     if request.method == 'GET':
         return "Hello World Page service 1 feature1 branch"
 
+@app.route('/feature2', methods=['GET', 'POST'])
+def assetcompliance_hello():
+    if request.method == 'GET':
+        return "Hello World Page service 1 feature2 branch"
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5052)
